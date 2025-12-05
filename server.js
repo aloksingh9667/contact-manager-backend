@@ -63,10 +63,13 @@ app.post("/contacts", async (req, res) => {
 // PUT update a contact
 app.put("/contacts/:id", async (req, res) => {
   const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
   try {
     const updatedContact = await Contact.findByIdAndUpdate(id, req.body, {
-      new: true, // return the updated document
-      runValidators: true, // validate data
+      new: true,
+      runValidators: true,
     });
     if (!updatedContact) return res.status(404).json({ error: "Contact Not Found" });
     res.json(updatedContact);
